@@ -24,7 +24,7 @@ import java.util.UUID;
  * Accepts any party id and returns the given contract id, or a new one.
  * Opens no socket. Used unless {@code firefly.lending.customer-contract=core}.
  */
-public final class SandboxCustomerContractLink implements CustomerContractLink {
+public final class SandboxCustomerContractLinkImpl implements CustomerContractLink {
 
     @Override
     public Mono<UUID> bind(UUID partyId, UUID contractId, UUID productId, String currency, UUID roleInContractId) {

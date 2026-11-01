@@ -31,7 +31,7 @@ import io.fireflysoftware.domain.lending.loan.origination.core.loan.origination.
 import io.fireflysoftware.domain.lending.loan.origination.core.loan.origination.workflows.RegisterScoreSaga;
 import io.fireflysoftware.domain.lending.loan.origination.core.loan.origination.workflows.UpdateApplicationStatusSaga;
 import io.fireflysoftware.domain.lending.loan.origination.core.shared.CustomerContractLink;
-import io.fireflysoftware.domain.lending.loan.origination.core.shared.SandboxCustomerContractLink;
+import io.fireflysoftware.domain.lending.loan.origination.core.shared.SandboxCustomerContractLinkImpl;
 import io.fireflysoftware.domain.lending.loan.origination.core.simulation.commands.PersistSimulationCommand;
 import org.fireflyframework.orchestration.saga.engine.SagaResult;
 import org.fireflyframework.orchestration.saga.engine.ExpandEach;
@@ -54,7 +54,7 @@ public class LoanOriginationServiceImpl implements LoanOriginationService {
     private final CustomerContractLink customerContract;
 
     public LoanOriginationServiceImpl(SagaEngine engine, QueryBus queryBus, CommandBus commandBus) {
-        this(engine, queryBus, commandBus, new SandboxCustomerContractLink());
+        this(engine, queryBus, commandBus, new SandboxCustomerContractLinkImpl());
     }
 
     @Autowired

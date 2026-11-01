@@ -31,7 +31,7 @@ public class CustomerContractConfiguration {
     @Bean
     @ConditionalOnProperty(name = "firefly.lending.customer-contract", havingValue = "sandbox", matchIfMissing = true)
     public CustomerContractLink sandboxCustomerContractLink() {
-        return new SandboxCustomerContractLink();
+        return new SandboxCustomerContractLinkImpl();
     }
 
     @Bean
@@ -39,6 +39,6 @@ public class CustomerContractConfiguration {
     public CustomerContractLink sdkCustomerContractLink(
             @Value("${firefly.lending.customer-base-url:http://localhost:8080}") String customerBaseUrl,
             @Value("${firefly.lending.contract-base-url:http://localhost:8080}") String contractBaseUrl) {
-        return new SdkCustomerContractLink(customerBaseUrl, contractBaseUrl);
+        return new SdkCustomerContractLinkImpl(customerBaseUrl, contractBaseUrl);
     }
 }

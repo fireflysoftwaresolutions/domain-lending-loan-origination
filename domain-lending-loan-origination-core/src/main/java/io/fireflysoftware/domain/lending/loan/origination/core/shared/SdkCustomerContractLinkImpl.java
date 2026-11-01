@@ -30,7 +30,7 @@ import java.util.UUID;
  * Validates the party with {@code core-common-customer-mgmt-sdk} and links the contract
  * with {@code core-common-contract-mgmt-sdk}. The loan is written only after this returns.
  */
-public final class SdkCustomerContractLink implements CustomerContractLink {
+public final class SdkCustomerContractLinkImpl implements CustomerContractLink {
 
     /**
      * {@code contract_party.role_in_contract_id} is required and has no foreign key.
@@ -42,7 +42,7 @@ public final class SdkCustomerContractLink implements CustomerContractLink {
     private final ContractsApi contracts;
     private final ContractPartiesApi contractParties;
 
-    public SdkCustomerContractLink(String customerBaseUrl, String contractBaseUrl) {
+    public SdkCustomerContractLinkImpl(String customerBaseUrl, String contractBaseUrl) {
         io.fireflysoftware.core.customer.sdk.invoker.ApiClient customers = new io.fireflysoftware.core.customer.sdk.invoker.ApiClient();
         customers.setBasePath(strip(customerBaseUrl));
         ApiClient agreements = new ApiClient();
@@ -50,7 +50,7 @@ public final class SdkCustomerContractLink implements CustomerContractLink {
         this(new PartiesApi(customers), new ContractsApi(agreements), new ContractPartiesApi(agreements));
     }
 
-    SdkCustomerContractLink(PartiesApi parties, ContractsApi contracts, ContractPartiesApi contractParties) {
+    SdkCustomerContractLinkImpl(PartiesApi parties, ContractsApi contracts, ContractPartiesApi contractParties) {
         this.parties = parties;
         this.contracts = contracts;
         this.contractParties = contractParties;
