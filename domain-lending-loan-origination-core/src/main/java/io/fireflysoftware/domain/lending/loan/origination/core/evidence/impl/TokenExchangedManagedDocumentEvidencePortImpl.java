@@ -38,7 +38,7 @@ public final class TokenExchangedManagedDocumentEvidencePortImpl implements Mana
     public TokenExchangedManagedDocumentEvidencePortImpl(ManagedDocumentExchangeSettings settings,ClientRegistration uploadRegistration,ClientRegistration readRegistration,ReactiveJwtDecoder decoder,Clock clock,LongSupplier nanos,AuthenticatedManagedEvidenceAuthorityImpl authority){
         this.settings=Objects.requireNonNull(settings);this.uploadRegistration=registration(uploadRegistration,UPLOAD);this.readRegistration=registration(readRegistration,READ);this.decoder=Objects.requireNonNull(decoder);this.clock=Objects.requireNonNull(clock);this.nanos=Objects.requireNonNull(nanos);this.authority=Objects.requireNonNull(authority);
         var connector=new JdkClientHttpConnector(HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NEVER).connectTimeout(Duration.ofSeconds(2)).build());
-        transport=ApiClient.buildWebClientBuilder().clientConnector(connector).codecs(c->{c.defaultCodecs().maxInMemorySize(3*1024*1024);c.defaultCodecs().enableLoggingRequestDetails(false);}).build();
+        transport=ApiClient.buildWebClientBuilder().clientConnector(connector).filter(managedContentNegotiation(settings.documentEndpoint())).codecs(c->{c.defaultCodecs().maxInMemorySize(3*1024*1024);c.defaultCodecs().enableLoggingRequestDetails(false);}).build();
         var oauth=WebClient.builder().clientConnector(connector).codecs(c->{c.defaultCodecs().maxInMemorySize(16384);c.defaultCodecs().enableLoggingRequestDetails(false);}).build();exchange=new WebClientReactiveTokenExchangeTokenResponseClient();exchange.setWebClient(oauth);
         exchange.setBodyExtractor((message,context)->org.springframework.security.oauth2.core.web.reactive.function.OAuth2BodyExtractors.oauth2AccessTokenResponse().extract(message,new org.springframework.web.reactive.function.BodyExtractor.Context(){
             public List<org.springframework.http.codec.HttpMessageReader<?>> messageReaders(){return context.messageReaders();}
@@ -71,6 +71,15 @@ public final class TokenExchangedManagedDocumentEvidencePortImpl implements Mana
             .timeout(remaining(scope)).switchIfEmpty(Mono.error(unavailable())).flatMap(response->content(scope,receipt,response))
             .flatMap(value->same(context.original(),scope).thenReturn(value))).timeout(remaining(scope)).onErrorMap(TokenExchangedManagedDocumentEvidencePortImpl::safeRead);
     });}
+    static ExchangeFilterFunction managedContentNegotiation(java.net.URI endpoint){
+        String prefix=Objects.requireNonNull(endpoint).getPath();final String basePath=prefix==null?"":prefix.replaceAll("/+$","");
+        return (request,next)->{
+        if(request.method()==HttpMethod.GET&&request.url().getPath().startsWith(basePath)&&request.url().getPath().substring(basePath.length()).matches("/api/v1/managed-document-evidence/applications/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/actions/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/content")){
+            // The original SDK prefers JSON when binary success and typed JSON failure are both declared.
+            return next.exchange(ClientRequest.from(request).headers(headers->headers.setAccept(List.of(MediaType.APPLICATION_OCTET_STREAM,MediaType.APPLICATION_JSON))).build());
+        }
+        return next.exchange(request);
+    };}
     private record ContextImpl(ApiClient client,JwtAuthenticationToken original){@Override public String toString(){return "DocumentSdkContext[redacted]";}}
     private Mono<ContextImpl> client(ManagedEvidenceAuthority.Scope scope,String purpose){return authority.requireTransportContext(scope).then(authentication()).flatMap(original->{
         requireSubject(original.getToken(),scope,false,purpose,null);remaining(scope);
