@@ -13,11 +13,15 @@ Developed by the Firefly Software Foundation. [dev@fireflysoftware.io](mailto:de
 
 [Website](https://fireflysoftware.io/) · [OpenPlatform](https://fireflysoftware.io/openplatform/) · [Module catalogue](https://fireflysoftware.io/openplatform/modules/)
 
-Domain layer microservice for loan origination within the Firefly lending platform. This service orchestrates the complete loan application lifecycle -- from initial submission through underwriting scoring, document attachment, and final approval or rejection -- using saga-based workflows with full compensation support.
+Domain layer microservice for loan origination within the Firefly lending platform. It orchestrates business operations through generated Core SDKs; Core services own persistence. Available endpoints do not establish complete lifecycle or compensation coverage. The operation guides below describe implemented behavior and remaining integration requirements.
 
 ## Governed draft intake
 
 See [draft intake runtime and recovery](docs/draft-intake-runtime.md) for the implemented authenticated operation, configuration, generated SDK boundary, and remaining lifecycle requirements.
+
+## Managed application evidence
+
+See [managed evidence upload and recovery](docs/managed-application-evidence.md) for immutable content custody, verified Loan association, authenticated SDK boundaries, and recovery of the original operation. A successful evidence receipt means stored content and an observed association; document verification remains pending.
 
 ## Overview
 

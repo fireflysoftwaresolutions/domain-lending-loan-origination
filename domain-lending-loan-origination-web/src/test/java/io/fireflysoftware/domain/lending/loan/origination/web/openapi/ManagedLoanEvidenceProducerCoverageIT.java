@@ -1,0 +1,24 @@
+/* Copyright 2026 Firefly Software Foundation. Licensed under the Apache License, Version 2.0. */
+package io.fireflysoftware.domain.lending.loan.origination.web.openapi;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import io.swagger.v3.core.util.Yaml;
+import java.nio.file.*;
+import java.util.*;
+import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
+
+/** Reads only actual complete controller captures. Neither input nor SDK is synthesized. */
+class ManagedLoanEvidenceProducerCoverageIT {
+    @Test void actualCompleteProducerPreservesEveryCurrentOperationAndAddsUsableBoundedUploadAndRecovery()throws Exception{
+        var mapper=Yaml.mapper().copy().enable(JsonParser.Feature.STRICT_DUPLICATE_DETECTION);var before=mapper.readTree(read("lending.evidence.domain.producer.original"));var after=mapper.readTree(read("lending.evidence.domain.producer.candidate"));var old=operations(before);assertThat(old).hasSize(30);
+        String path="/api/v1/managed-loan-evidence/applications/{applicationId}/actions/{actionId}";var expected=new HashSet<>(old);assertThat(expected.add(List.of(path,"post","storeManagedLoanEvidence"))).isTrue();assertThat(expected.add(List.of(path+"/recovery","post","recoverManagedLoanEvidence"))).isTrue();assertThat(operations(after)).containsExactlyInAnyOrderElementsOf(expected);
+        before.path("paths").properties().forEach(entry->assertThat(after.path("paths").path(entry.getKey())).isEqualTo(entry.getValue()));before.path("components").path("schemas").properties().forEach(entry->assertThat(after.path("components").path("schemas").path(entry.getKey())).isEqualTo(entry.getValue()));
+        for(String suffix:List.of("","/recovery")){var operation=after.path("paths").path(path+suffix).path("post");for(String code:List.of("200","201"))assertThat(operation.path("responses").path(code).path("content").path("application/json").path("schema").path("$ref").asText()).isEqualTo("#/components/schemas/ManagedEvidenceReceipt");for(String code:List.of("409","503"))assertThat(operation.path("responses").path(code).path("content").path("application/json").path("schema").path("$ref").asText()).isEqualTo("#/components/schemas/ManagedEvidenceError");assertThat(operation.path("security").findValues("lendingDomainIntakeBearer")).hasSize(1);for(var parameter:operation.path("parameters"))assertThat(parameter.path("name").asText()).isNotEqualToIgnoringCase("X-Idempotency-Key");}
+        var schemas=after.path("components").path("schemas");var input=schemas.path("ManagedEvidenceUploadRequest").path("properties");assertThat(input.path("fileName").path("maxLength").asInt()).isEqualTo(200);assertThat(input.path("content").path("type").asText()).isEqualTo("string");assertThat(input.path("content").path("format").asText()).isEqualTo("byte");assertThat(input.path("content").path("maxLength").asInt()).isEqualTo(2796204);assertThat(input.path("content").path("writeOnly").asBoolean()).isFalse();
+        for(String name:List.of("partyId","applicationId","tenantId","documentId","storageRef","mandatory","verified","verificationStatus"))assertThat(input.has(name)).isFalse();for(String name:List.of("storedAt","attachedAt"))assertThat(schemas.path("ManagedEvidenceReceipt").path("properties").path(name).path("$ref").asText()).isEqualTo("#/components/schemas/FireflyInstant");assertThat(schemas.path("FireflyInstant").path("type").asText()).isEqualTo("string");assertThat(schemas.path("FireflyInstant").path("format").asText()).isEqualTo("date-time");
+        Files.writeString(Path.of(System.getProperty("lending.evidence.domain.producer.coverage")),new com.fasterxml.jackson.databind.ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(Map.of("originalOperations",old,"actualOperations",operations(after),"allCurrentPathAndSchemaNodesPreserved",true,"nativeYamlSemanticComparison",true))+"\n");
+    }
+    static Set<List<String>> operations(JsonNode document){var result=new TreeSet<List<String>>(Comparator.comparing(Object::toString));Set<String> verbs=Set.of("get","post","put","patch","delete","head","options","trace");assertThat(document.path("openapi").asText()).startsWith("3.");document.path("paths").properties().forEach(path->path.getValue().properties().forEach(operation->{if(verbs.contains(operation.getKey())){String id=operation.getValue().path("operationId").asText();assertThat(id).isNotBlank();assertThat(result.add(List.of(path.getKey(),operation.getKey(),id))).isTrue();}}));return result;}
+    static byte[] read(String property)throws Exception{var path=Path.of(Objects.requireNonNull(System.getProperty(property)));assertThat(path).isAbsolute();assertThat(Files.isRegularFile(path)&&!Files.isSymbolicLink(path)).isTrue();byte[] bytes=Files.readAllBytes(path);assertThat(bytes.length).isBetween(1,2097152);return bytes;}
+}

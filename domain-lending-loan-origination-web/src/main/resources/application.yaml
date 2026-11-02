@@ -15,6 +15,9 @@ spring:
       enabled: true
 
 firefly:
+  openapi:
+    instant-scalar:
+      enabled: true
   cache:
     default-cache-type: POSTGRES
     postgres:

@@ -41,6 +41,12 @@
             <version>26.10.6</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.fireflysoftware</groupId>
+            <artifactId>core-common-document-mgmt-sdk</artifactId>
+            <version>26.10.6</version>
+        </dependency>
+
         <!-- Common Libraries -->
         <dependency>
             <groupId>org.fireflyframework</groupId>
