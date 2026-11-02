@@ -15,6 +15,10 @@ Developed by the Firefly Software Foundation. [dev@fireflysoftware.io](mailto:de
 
 Domain layer microservice for loan origination within the Firefly lending platform. This service orchestrates the complete loan application lifecycle -- from initial submission through underwriting scoring, document attachment, and final approval or rejection -- using saga-based workflows with full compensation support.
 
+## Governed draft intake
+
+See [draft intake runtime and recovery](docs/draft-intake-runtime.md) for the implemented authenticated operation, configuration, generated SDK boundary, and remaining lifecycle requirements.
+
 ## Overview
 
 The Lending Domain Loan Origination service acts as the domain orchestration layer that sits between API consumers and the core lending origination persistence layer. It receives high-level business commands (e.g., "submit application", "score application", "approve application") and decomposes them into coordinated multi-step saga workflows executed via the FireflyFramework transactional saga engine.
