@@ -31,7 +31,7 @@ import io.fireflysoftware.domain.lending.loan.origination.core.loan.origination.
 import io.fireflysoftware.domain.lending.loan.origination.core.loan.origination.workflows.RegisterScoreSaga;
 import io.fireflysoftware.domain.lending.loan.origination.core.loan.origination.workflows.UpdateApplicationStatusSaga;
 import io.fireflysoftware.domain.lending.loan.origination.core.shared.CustomerContractLink;
-import io.fireflysoftware.domain.lending.loan.origination.core.shared.SandboxCustomerContractLink;
+import io.fireflysoftware.domain.lending.loan.origination.core.shared.impl.UnavailableCustomerContractLinkImpl;
 import io.fireflysoftware.domain.lending.loan.origination.core.simulation.commands.PersistSimulationCommand;
 import org.fireflyframework.orchestration.saga.engine.SagaResult;
 import org.fireflyframework.orchestration.saga.engine.ExpandEach;
@@ -54,7 +54,7 @@ public class LoanOriginationServiceImpl implements LoanOriginationService {
     private final CustomerContractLink customerContract;
 
     public LoanOriginationServiceImpl(SagaEngine engine, QueryBus queryBus, CommandBus commandBus) {
-        this(engine, queryBus, commandBus, new SandboxCustomerContractLink());
+        this(engine, queryBus, commandBus, new UnavailableCustomerContractLinkImpl());
     }
 
     @Autowired
@@ -90,13 +90,8 @@ public class LoanOriginationServiceImpl implements LoanOriginationService {
         if (parties == null || parties.isEmpty()) {
             return Mono.empty();
         }
-        return Flux.fromIterable(parties)
-                .concatMap(party -> customerContract.bind(party.getPartyId(), party.getContractId(), null, null, party.getRoleCodeId())
-                        .doOnNext(contractId -> {
-                            party.setContractId(contractId);
-                            party.setContractLinked(true);
-                        }))
-                .then();
+        return Mono.error(new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY,
+                "Legacy party submission has no original contract action; create the managed draft and use the initial-primary contract operation"));
     }
 
     private static <T> List<T> nullSafe(List<T> list) {

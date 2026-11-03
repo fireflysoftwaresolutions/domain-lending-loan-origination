@@ -1,1105 +1,2798 @@
-{
-  "openapi": "3.0.1",
-  "info": {
-    "title": "domain-lending-loan-origination",
-    "description": "Lending Domain Loan Origination Layer Application",
-    "contact": {
-      "name": "Firefly Software Foundation",
-      "email": "dev@fireflysoftware.io"
-    },
-    "version": "1.0.0"
-  },
-  "servers": [
-    {
-      "url": "https://openplatform.fireflysoftware.io/domain-lending-loan-origination",
-      "description": "Development Environment"
-    },
-    {
-      "url": "/",
-      "description": "Local Development Environment"
-    }
-  ],
-  "tags": [
-    {
-      "name": "Loan Origination",
-      "description": "CQ queries and registration for Loan Origination"
-    }
-  ],
-  "paths": {
-    "/api/v1/loan-applications": {
-      "post": {
-        "tags": [
-          "Loan Origination"
-        ],
-        "summary": "Submit application",
-        "description": "Submit an application with product, amount, currency, and channel.",
-        "operationId": "submitApplication",
-        "parameters": [
-          {
-            "name": "X-Idempotency-Key",
-            "in": "header",
-            "description": "Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Party-ID",
-            "in": "header",
-            "description": "Identifier of the client (at least one of X-Party-ID, X-Employee-ID, or X-Service-Account-ID is required)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Employee-ID",
-            "in": "header",
-            "description": "Identifier of the employee (at least one of X-Party-ID, X-Employee-ID, or X-Service-Account-ID is required)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Service-Account-ID",
-            "in": "header",
-            "description": "Identifier of the service account (at least one of X-Party-ID, X-Employee-ID, or X-Service-Account-ID is required)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Auth-Roles",
-            "in": "header",
-            "description": "Roles of the subject (CUSTOMER, ADMIN, CUSTOMER_SUPPORT, SUPERVISOR, MANAGER, BRANCH_STAFF, SERVICE_ACCOUNT), comma-separated (optional)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Auth-Scopes",
-            "in": "header",
-            "description": "OAuth2 scopes like contracts.read, accounts.write, comma-separated (optional)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Request-ID",
-            "in": "header",
-            "description": "Unique identifier for the request, used for traceability (optional)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SubmitApplicationCommand"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/loan-applications/{appId}/withdraw": {
-      "post": {
-        "tags": [
-          "Loan Origination"
-        ],
-        "summary": "Withdraw application",
-        "description": "Withdraw the application by applicant request.",
-        "operationId": "withdrawApplication",
-        "parameters": [
-          {
-            "name": "appId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "X-Idempotency-Key",
-            "in": "header",
-            "description": "Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Party-ID",
-            "in": "header",
-            "description": "Identifier of the client (at least one of X-Party-ID, X-Employee-ID, or X-Service-Account-ID is required)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Employee-ID",
-            "in": "header",
-            "description": "Identifier of the employee (at least one of X-Party-ID, X-Employee-ID, or X-Service-Account-ID is required)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Service-Account-ID",
-            "in": "header",
-            "description": "Identifier of the service account (at least one of X-Party-ID, X-Employee-ID, or X-Service-Account-ID is required)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Auth-Roles",
-            "in": "header",
-            "description": "Roles of the subject (CUSTOMER, ADMIN, CUSTOMER_SUPPORT, SUPERVISOR, MANAGER, BRANCH_STAFF, SERVICE_ACCOUNT), comma-separated (optional)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Auth-Scopes",
-            "in": "header",
-            "description": "OAuth2 scopes like contracts.read, accounts.write, comma-separated (optional)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Request-ID",
-            "in": "header",
-            "description": "Unique identifier for the request, used for traceability (optional)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/loan-applications/{appId}/score": {
-      "post": {
-        "tags": [
-          "Loan Origination"
-        ],
-        "summary": "Score application",
-        "description": "Persist model score with model and version metadata.",
-        "operationId": "scoreApplication",
-        "parameters": [
-          {
-            "name": "appId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "X-Idempotency-Key",
-            "in": "header",
-            "description": "Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Party-ID",
-            "in": "header",
-            "description": "Identifier of the client (at least one of X-Party-ID, X-Employee-ID, or X-Service-Account-ID is required)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Employee-ID",
-            "in": "header",
-            "description": "Identifier of the employee (at least one of X-Party-ID, X-Employee-ID, or X-Service-Account-ID is required)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Service-Account-ID",
-            "in": "header",
-            "description": "Identifier of the service account (at least one of X-Party-ID, X-Employee-ID, or X-Service-Account-ID is required)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Auth-Roles",
-            "in": "header",
-            "description": "Roles of the subject (CUSTOMER, ADMIN, CUSTOMER_SUPPORT, SUPERVISOR, MANAGER, BRANCH_STAFF, SERVICE_ACCOUNT), comma-separated (optional)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Auth-Scopes",
-            "in": "header",
-            "description": "OAuth2 scopes like contracts.read, accounts.write, comma-separated (optional)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Request-ID",
-            "in": "header",
-            "description": "Unique identifier for the request, used for traceability (optional)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegisterUnderwritingScoreCommand"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/loan-applications/{appId}/reject": {
-      "post": {
-        "tags": [
-          "Loan Origination"
-        ],
-        "summary": "Reject application",
-        "description": "Reject with reason for risk, eligibility, or documentation issues.",
-        "operationId": "rejectApplication",
-        "parameters": [
-          {
-            "name": "appId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "X-Idempotency-Key",
-            "in": "header",
-            "description": "Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Party-ID",
-            "in": "header",
-            "description": "Identifier of the client (at least one of X-Party-ID, X-Employee-ID, or X-Service-Account-ID is required)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Employee-ID",
-            "in": "header",
-            "description": "Identifier of the employee (at least one of X-Party-ID, X-Employee-ID, or X-Service-Account-ID is required)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Service-Account-ID",
-            "in": "header",
-            "description": "Identifier of the service account (at least one of X-Party-ID, X-Employee-ID, or X-Service-Account-ID is required)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Auth-Roles",
-            "in": "header",
-            "description": "Roles of the subject (CUSTOMER, ADMIN, CUSTOMER_SUPPORT, SUPERVISOR, MANAGER, BRANCH_STAFF, SERVICE_ACCOUNT), comma-separated (optional)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Auth-Scopes",
-            "in": "header",
-            "description": "OAuth2 scopes like contracts.read, accounts.write, comma-separated (optional)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Request-ID",
-            "in": "header",
-            "description": "Unique identifier for the request, used for traceability (optional)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/loan-applications/{appId}/documents": {
-      "post": {
-        "tags": [
-          "Loan Origination"
-        ],
-        "summary": "Attach documents",
-        "description": "Attach supporting documents including income, statements, and collateral.",
-        "operationId": "attachDocuments",
-        "parameters": [
-          {
-            "name": "appId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "X-Idempotency-Key",
-            "in": "header",
-            "description": "Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Party-ID",
-            "in": "header",
-            "description": "Identifier of the client (at least one of X-Party-ID, X-Employee-ID, or X-Service-Account-ID is required)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Employee-ID",
-            "in": "header",
-            "description": "Identifier of the employee (at least one of X-Party-ID, X-Employee-ID, or X-Service-Account-ID is required)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Service-Account-ID",
-            "in": "header",
-            "description": "Identifier of the service account (at least one of X-Party-ID, X-Employee-ID, or X-Service-Account-ID is required)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Auth-Roles",
-            "in": "header",
-            "description": "Roles of the subject (CUSTOMER, ADMIN, CUSTOMER_SUPPORT, SUPERVISOR, MANAGER, BRANCH_STAFF, SERVICE_ACCOUNT), comma-separated (optional)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Auth-Scopes",
-            "in": "header",
-            "description": "OAuth2 scopes like contracts.read, accounts.write, comma-separated (optional)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Request-ID",
-            "in": "header",
-            "description": "Unique identifier for the request, used for traceability (optional)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegisterApplicationDocumentCommand"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/loan-applications/{appId}/approve": {
-      "post": {
-        "tags": [
-          "Loan Origination"
-        ],
-        "summary": "Approve application",
-        "description": "Approve with terms including rate, tenor, and fees aligned with product rules.",
-        "operationId": "approveApplication",
-        "parameters": [
-          {
-            "name": "appId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "X-Idempotency-Key",
-            "in": "header",
-            "description": "Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Party-ID",
-            "in": "header",
-            "description": "Identifier of the client (at least one of X-Party-ID, X-Employee-ID, or X-Service-Account-ID is required)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Employee-ID",
-            "in": "header",
-            "description": "Identifier of the employee (at least one of X-Party-ID, X-Employee-ID, or X-Service-Account-ID is required)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Service-Account-ID",
-            "in": "header",
-            "description": "Identifier of the service account (at least one of X-Party-ID, X-Employee-ID, or X-Service-Account-ID is required)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Auth-Roles",
-            "in": "header",
-            "description": "Roles of the subject (CUSTOMER, ADMIN, CUSTOMER_SUPPORT, SUPERVISOR, MANAGER, BRANCH_STAFF, SERVICE_ACCOUNT), comma-separated (optional)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Auth-Scopes",
-            "in": "header",
-            "description": "OAuth2 scopes like contracts.read, accounts.write, comma-separated (optional)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Request-ID",
-            "in": "header",
-            "description": "Unique identifier for the request, used for traceability (optional)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/loan-applications/{appId}": {
-      "get": {
-        "tags": [
-          "Loan Origination"
-        ],
-        "summary": "Get application",
-        "description": "Retrieve application state and audit log.",
-        "operationId": "getApplication",
-        "parameters": [
-          {
-            "name": "appId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "X-Party-ID",
-            "in": "header",
-            "description": "Identifier of the client (at least one of X-Party-ID, X-Employee-ID, or X-Service-Account-ID is required)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Employee-ID",
-            "in": "header",
-            "description": "Identifier of the employee (at least one of X-Party-ID, X-Employee-ID, or X-Service-Account-ID is required)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Service-Account-ID",
-            "in": "header",
-            "description": "Identifier of the service account (at least one of X-Party-ID, X-Employee-ID, or X-Service-Account-ID is required)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Auth-Roles",
-            "in": "header",
-            "description": "Roles of the subject (CUSTOMER, ADMIN, CUSTOMER_SUPPORT, SUPERVISOR, MANAGER, BRANCH_STAFF, SERVICE_ACCOUNT), comma-separated (optional)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Auth-Scopes",
-            "in": "header",
-            "description": "OAuth2 scopes like contracts.read, accounts.write, comma-separated (optional)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Request-ID",
-            "in": "header",
-            "description": "Unique identifier for the request, used for traceability (optional)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/LoanApplicationDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "RegisterApplicationDocumentCommand": {
-        "type": "object",
-        "properties": {
-          "applicationDocumentId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "loanApplicationId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "documentId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "documentTypeId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "isMandatory": {
-            "type": "boolean"
-          },
-          "isReceived": {
-            "type": "boolean"
-          },
-          "receivedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "RegisterApplicationPartyCommand": {
-        "type": "object",
-        "properties": {
-          "applicationPartyId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "loanApplicationId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "partyId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "roleCodeId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "sharePercentage": {
-            "type": "number"
-          },
-          "annualIncome": {
-            "type": "number"
-          },
-          "monthlyExpenses": {
-            "type": "number"
-          },
-          "employmentTypeId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "RegisterLoanApplicationCommand": {
-        "type": "object",
-        "properties": {
-          "loanApplicationId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "applicationNumber": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "applicationStatusId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "applicationSubStatusId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "applicationDate": {
-            "type": "string",
-            "format": "date"
-          },
-          "submissionChannelId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "partyId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "distributorId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "note": {
-            "type": "string"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "RegisterLoanApplicationStatusHistoryCommand": {
-        "type": "object",
-        "properties": {
-          "statusHistoryId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "loanApplicationId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "oldStatus": {
-            "type": "string",
-            "enum": [
-              "DRAFT",
-              "SUBMITTED",
-              "UNDER_REVIEW",
-              "APPROVED",
-              "REJECTED",
-              "CANCELLED"
-            ]
-          },
-          "newStatus": {
-            "type": "string",
-            "enum": [
-              "DRAFT",
-              "SUBMITTED",
-              "UNDER_REVIEW",
-              "APPROVED",
-              "REJECTED",
-              "CANCELLED"
-            ]
-          },
-          "changeReason": {
-            "type": "string"
-          },
-          "changedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "changedBy": {
-            "type": "string"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "RegisterProposedOfferCommand": {
-        "type": "object",
-        "properties": {
-          "proposedOfferId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "loanApplicationId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "productId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "requestedAmount": {
-            "type": "number"
-          },
-          "requestedTenorMonths": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "requestedInterestRate": {
-            "type": "number"
-          },
-          "validUntil": {
-            "type": "string",
-            "format": "date"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "RegisterUnderwritingDecisionCommand": {
-        "type": "object",
-        "properties": {
-          "underwritingDecisionId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "loanApplicationId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "decisionDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "decisionCodeId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "approvedAmount": {
-            "type": "number"
-          },
-          "approvedInterestRate": {
-            "type": "number"
-          },
-          "tenorMonths": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "riskGradeId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "remarks": {
-            "type": "string"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "RegisterUnderwritingScoreCommand": {
-        "type": "object",
-        "properties": {
-          "underwritingScoreId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "loanApplicationId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "scoreValue": {
-            "type": "number"
-          },
-          "scorecardName": {
-            "type": "string"
-          },
-          "reasonCodes": {
-            "type": "string"
-          },
-          "scoringTimestamp": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "SubmitApplicationCommand": {
-        "type": "object",
-        "properties": {
-          "application": {
-            "$ref": "#/components/schemas/RegisterLoanApplicationCommand"
-          },
-          "parties": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RegisterApplicationPartyCommand"
-            }
-          },
-          "documents": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RegisterApplicationDocumentCommand"
-            }
-          },
-          "offers": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RegisterProposedOfferCommand"
-            }
-          },
-          "statusHistories": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RegisterLoanApplicationStatusHistoryCommand"
-            }
-          },
-          "score": {
-            "$ref": "#/components/schemas/RegisterUnderwritingScoreCommand"
-          },
-          "decision": {
-            "$ref": "#/components/schemas/RegisterUnderwritingDecisionCommand"
-          }
-        }
-      },
-      "LoanApplicationDTO": {
-        "type": "object",
-        "properties": {
-          "loanApplicationId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "applicationNumber": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "applicationStatusId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "applicationSubStatusId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "applicationDate": {
-            "type": "string",
-            "format": "date"
-          },
-          "submissionChannelId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "partyId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "distributorId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "note": {
-            "type": "string"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      }
-    }
-  }
-}
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: http://localhost:18080
+  description: Generated server url
+tags:
+- name: Loan Origination
+  description: CQ queries and registration for Loan Origination
+paths:
+  /api/v1/loan-origination/applications/{applicationId}/parties/{partyId}:
+    put:
+      tags:
+      - Loan Origination
+      summary: Update application party
+      operationId: updateApplicationParty
+      parameters:
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: partyId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationPartyDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApplicationPartyDTO"
+    delete:
+      tags:
+      - Loan Origination
+      summary: Remove application party
+      operationId: removeApplicationParty
+      parameters:
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: partyId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+  /api/v1/loan-origination/applications/{applicationId}/offers/{offerId}:
+    put:
+      tags:
+      - Loan Origination
+      summary: Update application offer
+      operationId: updateApplicationOffer
+      parameters:
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: offerId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProposedOfferDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ProposedOfferDTO"
+  /api/v1/loan-origination/applications/{applicationId}/disbursement-account:
+    put:
+      tags:
+      - Loan Origination
+      summary: Configure disbursement account
+      operationId: configureDisbursementAccount
+      parameters:
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoanApplicationDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/LoanApplicationDTO"
+  /api/v1/managed-loan-evidence/applications/{applicationId}/actions/{actionId}/recovery:
+    post:
+      tags:
+      - managed-loan-evidence-controller
+      summary: Observe original Document bytes and complete or read the same original
+        Loan association
+      description: "May create the missing Loan association after revalidating current\
+        \ authority and hashing actual stored Document bytes. Never uploads another\
+        \ document, mints another action or deletes retained custody."
+      operationId: recoverManagedLoanEvidence
+      parameters:
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: actionId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "201":
+          description: Original pending association completed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManagedEvidenceReceipt"
+        "200":
+          description: Existing exact original association and content verified
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManagedEvidenceReceipt"
+        "400":
+          description: Invalid original application/action
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManagedEvidenceReceipt"
+        "401":
+          description: Bearer authentication refused
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManagedEvidenceReceipt"
+        "403":
+          description: Current original party authority refused
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManagedEvidenceReceipt"
+        "409":
+          description: Original action is bound to different evidence
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManagedEvidenceError"
+        "503":
+          description: Typed original owner progress retained; only same-action recovery
+            is safe
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManagedEvidenceError"
+      security:
+      - lendingDomainIntakeBearer: []
+      x-disable-idempotency: true
+  /api/v1/managed-loan-evidence/applications/{applicationId}/actions/{actionId}:
+    post:
+      tags:
+      - managed-loan-evidence-controller
+      summary: Store actual evidence bytes and attach the verified owner reference
+        to the signed party's managed loan application
+      description: The route owns the application and action. Current signed authority
+        owns the party and owner namespaces. The Document owner stores immutable bytes;
+        the Loan owner alone persists the association. Verification remains PENDING.
+        Exact replay always revalidates current authority.
+      operationId: storeManagedLoanEvidence
+      parameters:
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: actionId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ManagedEvidenceUploadRequest"
+        required: true
+      responses:
+        "201":
+          description: Actual Document custody and original Loan association observed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManagedEvidenceReceipt"
+        "200":
+          description: Exact original evidence and association replayed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManagedEvidenceReceipt"
+        "400":
+          description: "Invalid content, filename or original route/action"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManagedEvidenceReceipt"
+        "413":
+          description: JSON envelope exceeds 3145728 bytes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManagedEvidenceReceipt"
+        "401":
+          description: Bearer authentication refused
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManagedEvidenceReceipt"
+        "403":
+          description: Current original party authority refused
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManagedEvidenceReceipt"
+        "409":
+          description: Original action has different immutable evidence
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManagedEvidenceError"
+        "503":
+          description: Typed original owner progress retained; recover the same action
+            without deleting custody or starting a new action
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManagedEvidenceError"
+      security:
+      - lendingDomainIntakeBearer: []
+      x-disable-idempotency: true
+  /api/v1/loan-origination/applications/{applicationId}/tasks/{taskId}/complete:
+    post:
+      tags:
+      - Loan Origination
+      summary: Complete application task
+      operationId: completeApplicationTask
+      parameters:
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApplicationTaskDTO"
+  /api/v1/loan-origination/applications/{applicationId}/parties:
+    get:
+      tags:
+      - Loan Origination
+      summary: Get application parties
+      operationId: getApplicationParties
+      parameters:
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Application parties retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaginationResponseApplicationPartyDTO"
+    post:
+      tags:
+      - Loan Origination
+      summary: Add application party
+      operationId: addApplicationParty
+      parameters:
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationPartyDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApplicationPartyDTO"
+  /api/v1/loan-origination/applications/{applicationId}/bank-accounts:
+    get:
+      tags:
+      - Loan Origination
+      summary: Get application bank accounts
+      operationId: getApplicationBankAccounts
+      parameters:
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Application bank accounts retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaginationResponseApplicationExternalBankAccountDTO"
+    post:
+      tags:
+      - Loan Origination
+      summary: Register external bank account
+      operationId: registerExternalBankAccount
+      parameters:
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationExternalBankAccountDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApplicationExternalBankAccountDTO"
+  /api/v1/loan-applications:
+    post:
+      tags:
+      - Loan Origination
+      summary: Submit application
+      description: "Submit an application with product, amount, currency, and channel."
+      operationId: submitApplication
+      parameters:
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubmitApplicationCommand"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+                  format: uuid
+  /api/v1/loan-applications/{appId}/withdraw:
+    post:
+      tags:
+      - Loan Origination
+      summary: Withdraw application
+      description: Withdraw the application by applicant request.
+      operationId: withdrawApplication
+      parameters:
+      - name: appId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/v1/loan-applications/{appId}/score:
+    post:
+      tags:
+      - Loan Origination
+      summary: Score application
+      description: Persist model score with model and version metadata.
+      operationId: scoreApplication
+      parameters:
+      - name: appId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterUnderwritingScoreCommand"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/v1/loan-applications/{appId}/reject:
+    post:
+      tags:
+      - Loan Origination
+      summary: Reject application
+      description: "Reject with reason for risk, eligibility, or documentation issues."
+      operationId: rejectApplication
+      parameters:
+      - name: appId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/v1/loan-applications/{appId}/documents:
+    post:
+      tags:
+      - Loan Origination
+      summary: Attach documents
+      description: "Attach supporting documents including income, statements, and\
+        \ collateral."
+      operationId: attachDocuments
+      parameters:
+      - name: appId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterApplicationDocumentCommand"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+                  format: uuid
+  /api/v1/loan-applications/{appId}/approve:
+    post:
+      tags:
+      - Loan Origination
+      summary: Approve application
+      description: "Approve with terms including rate, tenor, and fees aligned with\
+        \ product rules."
+      operationId: approveApplication
+      parameters:
+      - name: appId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/v1/loan-applications/simulations:
+    post:
+      tags:
+      - Loan Origination
+      summary: Persist a pre-computed simulation
+      description: Persists a pre-computed loan simulation through the core lending
+        loan-origination service.
+      operationId: persistLendingSimulation
+      parameters:
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PersistSimulationCommand"
+        required: true
+      responses:
+        "201":
+          description: Simulation persisted successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SimulationDTO"
+        "400":
+          description: Invalid simulation payload
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SimulationDTO"
+  /api/v1/loan-application-intakes:
+    post:
+      tags:
+      - DraftLoanIntakes
+      summary: Create or replay an authorized DRAFT loan intake
+      description: "Preserves exact retained simulation terms. The receipt contains\
+        \ the initial DRAFT/PENDING_DOCUMENTS status, not an offer, contract, approval,\
+        \ or disbursement."
+      operationId: createDraftLoanIntake
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DraftLoanIntakeRequest"
+        required: true
+      responses:
+        "201":
+          description: Original draft application and primary borrower created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DraftLoanIntakeReceipt"
+        "200":
+          description: Exact original draft intake replayed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DraftLoanIntakeReceipt"
+      security:
+      - lendingDomainIntakeBearer: []
+      x-disable-idempotency: true
+  /api/v1/loan-applications/{applicationId}/employment-data:
+    patch:
+      tags:
+      - Loan Origination
+      summary: Update primary applicant employment data
+      description: Updates the economic / employment data of the primary application
+        party associated with the loan application.
+      operationId: updateApplicationEmploymentData
+      parameters:
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateApplicationEmploymentDataCommand"
+        required: true
+      responses:
+        "200":
+          description: Employment data updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApplicationPartyDTO"
+        "400":
+          description: Invalid employment data payload
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApplicationPartyDTO"
+        "404":
+          description: Application or primary application party not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApplicationPartyDTO"
+  /api/v1/loan-origination/applications/{applicationId}/verifications:
+    get:
+      tags:
+      - Loan Origination
+      summary: Get application verifications
+      operationId: getApplicationVerifications
+      parameters:
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Application verifications retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaginationResponseApplicationVerificationDTO"
+  /api/v1/loan-origination/applications/{applicationId}/tasks:
+    get:
+      tags:
+      - Loan Origination
+      summary: Get application tasks
+      operationId: getApplicationTasks
+      parameters:
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Application tasks retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaginationResponseApplicationTaskDTO"
+  /api/v1/loan-origination/applications/{applicationId}/offers:
+    get:
+      tags:
+      - Loan Origination
+      summary: Get application offers
+      operationId: getApplicationOffers
+      parameters:
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Application offers retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaginationResponseProposedOfferDTO"
+  /api/v1/loan-origination/applications/{applicationId}/fees:
+    get:
+      tags:
+      - Loan Origination
+      summary: Get application fees
+      operationId: getApplicationFees
+      parameters:
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Application fees retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaginationResponseApplicationFeeDTO"
+  /api/v1/loan-origination/applications/{applicationId}/documents:
+    get:
+      tags:
+      - Loan Origination
+      summary: Get application documents
+      operationId: getApplicationDocuments
+      parameters:
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Application documents retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaginationResponseApplicationDocumentDTO"
+  /api/v1/loan-origination/applications/{applicationId}/documents/{documentId}:
+    get:
+      tags:
+      - Loan Origination
+      summary: Get application document by id
+      operationId: getApplicationDocumentById
+      parameters:
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: documentId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Application document retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApplicationDocumentDTO"
+    delete:
+      tags:
+      - Loan Origination
+      summary: Delete application document
+      operationId: deleteApplicationDocument
+      parameters:
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: documentId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+  /api/v1/loan-origination/applications/{applicationId}/detail:
+    get:
+      tags:
+      - Loan Origination
+      summary: Get application detail
+      operationId: getApplicationDetail
+      parameters:
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Application detail retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/LoanApplicationDTO"
+  /api/v1/loan-origination/applications/{applicationId}/decisions:
+    get:
+      tags:
+      - Loan Origination
+      summary: Get application decisions
+      operationId: getApplicationDecisions
+      parameters:
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Application decisions retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaginationResponseUnderwritingDecisionDTO"
+  /api/v1/loan-origination/applications/{applicationId}/conditions:
+    get:
+      tags:
+      - Loan Origination
+      summary: Get application conditions
+      operationId: getApplicationConditions
+      parameters:
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Application conditions retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaginationResponseApplicationConditionDTO"
+  /api/v1/loan-applications/{appId}:
+    get:
+      tags:
+      - Loan Origination
+      summary: Get application
+      description: Retrieve application state and audit log.
+      operationId: getApplication
+      parameters:
+      - name: appId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/LoanApplicationDTO"
+  /api/v1/loan-origination/applications/{applicationId}/bank-accounts/{accountId}:
+    delete:
+      tags:
+      - Loan Origination
+      summary: Delete external bank account
+      operationId: deleteExternalBankAccount
+      parameters:
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        description: "Optional retry key for scoped POST, PUT, PATCH, and DELETE response\
+          \ reuse. Safe methods ignore it. Reuse requires configured trusted identity\
+          \ and namespace; changed input returns 409. Business effects require durable\
+          \ application idempotency."
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+components:
+  schemas:
+    ApplicationPartyDTO:
+      required:
+      - employmentTypeId
+      - loanApplicationId
+      - partyId
+      - roleCodeId
+      type: object
+      properties:
+        applicationPartyId:
+          type: string
+          format: uuid
+          nullable: true
+        loanApplicationId:
+          type: string
+          format: uuid
+        partyId:
+          type: string
+          format: uuid
+        roleCodeId:
+          type: string
+          format: uuid
+        sharePercentage:
+          type: number
+          nullable: true
+        annualIncome:
+          type: number
+          nullable: true
+        monthlyExpenses:
+          type: number
+          nullable: true
+        employmentTypeId:
+          type: string
+          format: uuid
+        employmentStatus:
+          type: string
+          nullable: true
+        employmentTypeLabel:
+          type: string
+          nullable: true
+        employer:
+          type: string
+          nullable: true
+        position:
+          type: string
+          nullable: true
+        employmentStartDate:
+          type: string
+          format: date
+          nullable: true
+        annualPaydays:
+          type: integer
+          format: int32
+          nullable: true
+        monthlySalary:
+          type: number
+          nullable: true
+        housingType:
+          type: string
+          nullable: true
+        housingCost:
+          type: number
+          nullable: true
+        housingStartDate:
+          type: string
+          format: date
+          nullable: true
+        existingLoans:
+          type: integer
+          format: int32
+          nullable: true
+        otherDebts:
+          type: number
+          nullable: true
+        isPrimary:
+          type: boolean
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+    ProposedOfferDTO:
+      required:
+      - loanApplicationId
+      - productId
+      - requestedAmount
+      - requestedInterestRate
+      - requestedTenorMonths
+      type: object
+      properties:
+        proposedOfferId:
+          type: string
+          format: uuid
+          nullable: true
+        loanApplicationId:
+          type: string
+          format: uuid
+        productId:
+          type: string
+          format: uuid
+        requestedAmount:
+          type: number
+        requestedTenorMonths:
+          type: integer
+          format: int32
+        requestedInterestRate:
+          type: number
+        validUntil:
+          type: string
+          format: date
+          nullable: true
+        offerStatus:
+          type: string
+          nullable: true
+        acceptedAt:
+          type: string
+          format: date-time
+          nullable: true
+        acceptedBy:
+          type: string
+          format: uuid
+          nullable: true
+        rejectionReason:
+          type: string
+          nullable: true
+        monthlyPayment:
+          type: number
+          nullable: true
+        totalInterest:
+          type: number
+          nullable: true
+        totalAmount:
+          type: number
+          nullable: true
+        apr:
+          type: number
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+    LoanApplicationDTO:
+      required:
+      - applicationDate
+      - applicationStatusId
+      - applicationSubStatusId
+      - submissionChannelId
+      type: object
+      properties:
+        loanApplicationId:
+          type: string
+          format: uuid
+          nullable: true
+        applicationNumber:
+          type: string
+          format: uuid
+          nullable: true
+        applicationStatusId:
+          type: string
+          format: uuid
+        applicationSubStatusId:
+          type: string
+          format: uuid
+        applicationDate:
+          type: string
+          format: date
+        submissionChannelId:
+          type: string
+          format: uuid
+        distributorId:
+          type: string
+          format: uuid
+          nullable: true
+        distributorAgencyId:
+          type: string
+          format: uuid
+          nullable: true
+        distributorAgentId:
+          type: string
+          format: uuid
+          nullable: true
+        businessUnit:
+          type: string
+          nullable: true
+        branchId:
+          type: string
+          format: uuid
+          nullable: true
+        loanPurpose:
+          type: string
+          nullable: true
+        loanPurposeDescription:
+          type: string
+          nullable: true
+        submittedAt:
+          type: string
+          format: date-time
+          nullable: true
+        firstReviewAt:
+          type: string
+          format: date-time
+          nullable: true
+        decisionDueDate:
+          type: string
+          format: date
+          nullable: true
+        expectedClosingDate:
+          type: string
+          format: date
+          nullable: true
+        loanOfficerId:
+          type: string
+          format: uuid
+          nullable: true
+        assignedAt:
+          type: string
+          format: date-time
+          nullable: true
+        isRush:
+          type: boolean
+          nullable: true
+        isException:
+          type: boolean
+          nullable: true
+        requiresManualReview:
+          type: boolean
+          nullable: true
+        externalReferenceNumber:
+          type: string
+          nullable: true
+        sourceSystem:
+          type: string
+          nullable: true
+        disbursementMethodType:
+          type: string
+          nullable: true
+          enum:
+          - INTERNAL_ACCOUNT
+          - EXTERNAL_ACCOUNT
+        disbursementInternalAccountId:
+          type: string
+          format: uuid
+          nullable: true
+        disbursementExternalBankAccountId:
+          type: string
+          format: uuid
+          nullable: true
+        paymentCollectionMethodType:
+          type: string
+          nullable: true
+          enum:
+          - INTERNAL_ACCOUNT
+          - EXTERNAL_ACCOUNT
+        paymentCollectionInternalAccountId:
+          type: string
+          format: uuid
+          nullable: true
+        paymentCollectionExternalBankAccountId:
+          type: string
+          format: uuid
+          nullable: true
+        note:
+          type: string
+          nullable: true
+        simulationId:
+          type: string
+          format: uuid
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+    ManagedEvidenceReceipt:
+      type: object
+      properties:
+        actionId:
+          type: string
+          format: uuid
+        applicationId:
+          type: string
+          format: uuid
+        partyId:
+          type: string
+          format: uuid
+        documentId:
+          type: string
+          format: uuid
+        associationId:
+          type: string
+          format: uuid
+        fileName:
+          type: string
+        documentTypeCode:
+          type: string
+        mediaType:
+          type: string
+        contentLength:
+          type: integer
+          format: int64
+        contentDigest:
+          type: string
+        documentIntentDigest:
+          type: string
+        associationIntentDigest:
+          type: string
+        storedAt:
+          $ref: "#/components/schemas/FireflyInstant"
+        attachedAt:
+          $ref: "#/components/schemas/FireflyInstant"
+        associationState:
+          type: string
+        verificationStatus:
+          type: string
+        replayed:
+          type: boolean
+    ManagedEvidenceError:
+      type: object
+      properties:
+        actionId:
+          type: string
+          format: uuid
+        code:
+          type: string
+        outcome:
+          type: string
+          enum:
+          - CONFLICT
+          - OBSERVATION_UNAVAILABLE
+          - DOCUMENT_OUTCOME_UNKNOWN
+          - DOCUMENT_STORED_ASSOCIATION_UNAVAILABLE
+          - DOCUMENT_STORED_ASSOCIATION_UNKNOWN
+          - ASSOCIATION_COMMITTED_RESPONSE_UNAVAILABLE
+        recovery:
+          type: string
+        documentId:
+          type: string
+          format: uuid
+        associationId:
+          type: string
+          format: uuid
+        contentDigest:
+          type: string
+        documentIntentDigest:
+          type: string
+    ManagedEvidenceUploadRequest:
+      required:
+      - actionId
+      - content
+      - documentTypeCode
+      - fileName
+      - mediaType
+      type: object
+      properties:
+        actionId:
+          type: string
+          format: uuid
+        fileName:
+          maxLength: 200
+          minLength: 0
+          type: string
+        documentTypeCode:
+          minLength: 1
+          pattern: "[A-Z][A-Z0-9_]{0,49}"
+          type: string
+        mediaType:
+          maxLength: 100
+          minLength: 0
+          type: string
+        content:
+          maxLength: 2796204
+          minLength: 4
+          type: string
+          description: Base64 of 1 through 2097152 decoded content bytes; the JSON
+            envelope is bounded to 3145728 bytes
+          format: byte
+    ApplicationTaskDTO:
+      required:
+      - loanApplicationId
+      - taskType
+      type: object
+      properties:
+        taskId:
+          type: string
+          format: uuid
+          nullable: true
+        loanApplicationId:
+          type: string
+          format: uuid
+        taskType:
+          type: string
+        taskStatus:
+          type: string
+          nullable: true
+        priority:
+          type: string
+          nullable: true
+        assignedTo:
+          type: string
+          nullable: true
+        assignedAt:
+          type: string
+          format: date-time
+          nullable: true
+        dueDate:
+          type: string
+          format: date-time
+          nullable: true
+        completedAt:
+          type: string
+          format: date-time
+          nullable: true
+        completedBy:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+    ApplicationExternalBankAccountDTO:
+      required:
+      - accountHolderName
+      - accountNumber
+      - accountUsageType
+      - bankName
+      - loanApplicationId
+      type: object
+      properties:
+        externalBankAccountId:
+          type: string
+          format: uuid
+          nullable: true
+        loanApplicationId:
+          type: string
+          format: uuid
+        accountUsageType:
+          type: string
+          enum:
+          - DISBURSEMENT
+          - PAYMENT_COLLECTION
+          - BOTH
+        accountHolderName:
+          type: string
+        bankName:
+          type: string
+        bankCode:
+          type: string
+          nullable: true
+        branchCode:
+          type: string
+          nullable: true
+        accountNumber:
+          type: string
+        accountType:
+          type: string
+          nullable: true
+        currencyCode:
+          type: string
+          nullable: true
+        iban:
+          type: string
+          nullable: true
+        routingNumber:
+          type: string
+          nullable: true
+        isVerified:
+          type: boolean
+          nullable: true
+        verificationMethod:
+          type: string
+          nullable: true
+        verifiedAt:
+          type: string
+          format: date-time
+          nullable: true
+        isPrimary:
+          type: boolean
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+    RegisterApplicationDocumentCommand:
+      required:
+      - documentId
+      - documentTypeId
+      - isMandatory
+      - isReceived
+      - loanApplicationId
+      type: object
+      properties:
+        applicationDocumentId:
+          type: string
+          format: uuid
+          nullable: true
+        loanApplicationId:
+          type: string
+          format: uuid
+        documentId:
+          type: string
+          format: uuid
+        documentTypeId:
+          type: string
+          format: uuid
+        isMandatory:
+          type: boolean
+        isReceived:
+          type: boolean
+        receivedAt:
+          type: string
+          format: date-time
+          nullable: true
+        documentName:
+          type: string
+          nullable: true
+        fileSizeBytes:
+          type: integer
+          format: int64
+          nullable: true
+        mimeType:
+          type: string
+          nullable: true
+        verificationStatus:
+          type: string
+          nullable: true
+        verifiedBy:
+          type: string
+          format: uuid
+          nullable: true
+        verifiedAt:
+          type: string
+          format: date-time
+          nullable: true
+        rejectionReason:
+          type: string
+          nullable: true
+        expiryDate:
+          type: string
+          format: date
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+        documentTypeCode:
+          type: string
+          writeOnly: true
+    RegisterApplicationPartyCommand:
+      required:
+      - employmentTypeId
+      - loanApplicationId
+      - partyId
+      - roleCodeId
+      type: object
+      properties:
+        applicationPartyId:
+          type: string
+          format: uuid
+          nullable: true
+        loanApplicationId:
+          type: string
+          format: uuid
+        partyId:
+          type: string
+          format: uuid
+        roleCodeId:
+          type: string
+          format: uuid
+        sharePercentage:
+          type: number
+          nullable: true
+        annualIncome:
+          type: number
+          nullable: true
+        monthlyExpenses:
+          type: number
+          nullable: true
+        employmentTypeId:
+          type: string
+          format: uuid
+        employmentStatus:
+          type: string
+          nullable: true
+        employmentTypeLabel:
+          type: string
+          nullable: true
+        employer:
+          type: string
+          nullable: true
+        position:
+          type: string
+          nullable: true
+        employmentStartDate:
+          type: string
+          format: date
+          nullable: true
+        annualPaydays:
+          type: integer
+          format: int32
+          nullable: true
+        monthlySalary:
+          type: number
+          nullable: true
+        housingType:
+          type: string
+          nullable: true
+        housingCost:
+          type: number
+          nullable: true
+        housingStartDate:
+          type: string
+          format: date
+          nullable: true
+        existingLoans:
+          type: integer
+          format: int32
+          nullable: true
+        otherDebts:
+          type: number
+          nullable: true
+        isPrimary:
+          type: boolean
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+        contractId:
+          type: string
+          format: uuid
+        contractLinked:
+          type: boolean
+    RegisterLoanApplicationCommand:
+      required:
+      - applicationDate
+      - applicationStatusId
+      - applicationSubStatusId
+      - submissionChannelId
+      type: object
+      properties:
+        loanApplicationId:
+          type: string
+          format: uuid
+          nullable: true
+        applicationNumber:
+          type: string
+          format: uuid
+          nullable: true
+        applicationStatusId:
+          type: string
+          format: uuid
+        applicationSubStatusId:
+          type: string
+          format: uuid
+        applicationDate:
+          type: string
+          format: date
+        submissionChannelId:
+          type: string
+          format: uuid
+        distributorId:
+          type: string
+          format: uuid
+          nullable: true
+        distributorAgencyId:
+          type: string
+          format: uuid
+          nullable: true
+        distributorAgentId:
+          type: string
+          format: uuid
+          nullable: true
+        businessUnit:
+          type: string
+          nullable: true
+        branchId:
+          type: string
+          format: uuid
+          nullable: true
+        loanPurpose:
+          type: string
+          nullable: true
+        loanPurposeDescription:
+          type: string
+          nullable: true
+        submittedAt:
+          type: string
+          format: date-time
+          nullable: true
+        firstReviewAt:
+          type: string
+          format: date-time
+          nullable: true
+        decisionDueDate:
+          type: string
+          format: date
+          nullable: true
+        expectedClosingDate:
+          type: string
+          format: date
+          nullable: true
+        loanOfficerId:
+          type: string
+          format: uuid
+          nullable: true
+        assignedAt:
+          type: string
+          format: date-time
+          nullable: true
+        isRush:
+          type: boolean
+          nullable: true
+        isException:
+          type: boolean
+          nullable: true
+        requiresManualReview:
+          type: boolean
+          nullable: true
+        externalReferenceNumber:
+          type: string
+          nullable: true
+        sourceSystem:
+          type: string
+          nullable: true
+        disbursementMethodType:
+          type: string
+          nullable: true
+          enum:
+          - INTERNAL_ACCOUNT
+          - EXTERNAL_ACCOUNT
+        disbursementInternalAccountId:
+          type: string
+          format: uuid
+          nullable: true
+        disbursementExternalBankAccountId:
+          type: string
+          format: uuid
+          nullable: true
+        paymentCollectionMethodType:
+          type: string
+          nullable: true
+          enum:
+          - INTERNAL_ACCOUNT
+          - EXTERNAL_ACCOUNT
+        paymentCollectionInternalAccountId:
+          type: string
+          format: uuid
+          nullable: true
+        paymentCollectionExternalBankAccountId:
+          type: string
+          format: uuid
+          nullable: true
+        note:
+          type: string
+          nullable: true
+        simulationId:
+          type: string
+          format: uuid
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+    RegisterLoanApplicationStatusHistoryCommand:
+      required:
+      - changedAt
+      - changedBy
+      - loanApplicationId
+      - newStatus
+      - oldStatus
+      type: object
+      properties:
+        statusHistoryId:
+          type: string
+          format: uuid
+          nullable: true
+        loanApplicationId:
+          type: string
+          format: uuid
+        oldStatus:
+          type: string
+          enum:
+          - DRAFT
+          - SUBMITTED
+          - UNDER_REVIEW
+          - APPROVED
+          - REJECTED
+          - CANCELLED
+        newStatus:
+          type: string
+          enum:
+          - DRAFT
+          - SUBMITTED
+          - UNDER_REVIEW
+          - APPROVED
+          - REJECTED
+          - CANCELLED
+        changeReason:
+          type: string
+          nullable: true
+        changedAt:
+          type: string
+          format: date-time
+        changedBy:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+    RegisterProposedOfferCommand:
+      required:
+      - loanApplicationId
+      - productId
+      - requestedAmount
+      - requestedInterestRate
+      - requestedTenorMonths
+      type: object
+      properties:
+        proposedOfferId:
+          type: string
+          format: uuid
+          nullable: true
+        loanApplicationId:
+          type: string
+          format: uuid
+        productId:
+          type: string
+          format: uuid
+        requestedAmount:
+          type: number
+        requestedTenorMonths:
+          type: integer
+          format: int32
+        requestedInterestRate:
+          type: number
+        validUntil:
+          type: string
+          format: date
+          nullable: true
+        offerStatus:
+          type: string
+          nullable: true
+        acceptedAt:
+          type: string
+          format: date-time
+          nullable: true
+        acceptedBy:
+          type: string
+          format: uuid
+          nullable: true
+        rejectionReason:
+          type: string
+          nullable: true
+        monthlyPayment:
+          type: number
+          nullable: true
+        totalInterest:
+          type: number
+          nullable: true
+        totalAmount:
+          type: number
+          nullable: true
+        apr:
+          type: number
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+    RegisterUnderwritingDecisionCommand:
+      required:
+      - decisionCodeId
+      - decisionDate
+      - loanApplicationId
+      type: object
+      properties:
+        underwritingDecisionId:
+          type: string
+          format: uuid
+          nullable: true
+        loanApplicationId:
+          type: string
+          format: uuid
+        decisionDate:
+          type: string
+          format: date-time
+        decisionCodeId:
+          type: string
+          format: uuid
+        approvedAmount:
+          type: number
+          nullable: true
+        approvedInterestRate:
+          type: number
+          nullable: true
+        tenorMonths:
+          type: integer
+          format: int32
+          nullable: true
+        riskGradeId:
+          type: string
+          format: uuid
+          nullable: true
+        remarks:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+    RegisterUnderwritingScoreCommand:
+      required:
+      - loanApplicationId
+      - scoreValue
+      - scorecardName
+      - scoringTimestamp
+      type: object
+      properties:
+        underwritingScoreId:
+          type: string
+          format: uuid
+          nullable: true
+        loanApplicationId:
+          type: string
+          format: uuid
+        scoreValue:
+          type: number
+        scorecardName:
+          type: string
+        reasonCodes:
+          type: string
+          nullable: true
+        scoringTimestamp:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+    SubmitApplicationCommand:
+      type: object
+      properties:
+        application:
+          $ref: "#/components/schemas/RegisterLoanApplicationCommand"
+        parties:
+          type: array
+          items:
+            $ref: "#/components/schemas/RegisterApplicationPartyCommand"
+        documents:
+          type: array
+          items:
+            $ref: "#/components/schemas/RegisterApplicationDocumentCommand"
+        offers:
+          type: array
+          items:
+            $ref: "#/components/schemas/RegisterProposedOfferCommand"
+        statusHistories:
+          type: array
+          items:
+            $ref: "#/components/schemas/RegisterLoanApplicationStatusHistoryCommand"
+        score:
+          $ref: "#/components/schemas/RegisterUnderwritingScoreCommand"
+        decision:
+          $ref: "#/components/schemas/RegisterUnderwritingDecisionCommand"
+    PersistSimulationCommand:
+      type: object
+      properties:
+        productId:
+          type: string
+          format: uuid
+        productType:
+          type: string
+        requestedAmount:
+          type: number
+        term:
+          type: integer
+          format: int32
+        purpose:
+          type: string
+        sector:
+          type: string
+        assetType:
+          type: string
+        monthlyPayment:
+          type: number
+        tin:
+          type: number
+        tae:
+          type: number
+        totalAmount:
+          type: number
+        currency:
+          type: string
+    SimulationDTO:
+      required:
+      - productType
+      - requestedAmount
+      - term
+      type: object
+      properties:
+        simulationId:
+          type: string
+          format: uuid
+          nullable: true
+        productId:
+          type: string
+          format: uuid
+          nullable: true
+        productType:
+          type: string
+        requestedAmount:
+          type: number
+        term:
+          type: integer
+          format: int32
+        purpose:
+          type: string
+          nullable: true
+        sector:
+          type: string
+          nullable: true
+        assetType:
+          type: string
+          nullable: true
+        monthlyPayment:
+          type: number
+          nullable: true
+        tin:
+          type: number
+          nullable: true
+        tae:
+          type: number
+          nullable: true
+        totalAmount:
+          type: number
+          nullable: true
+        currency:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+    DraftLoanIntakeRequest:
+      required:
+      - currency
+      - partyId
+      - productId
+      - requestId
+      - requestedAmount
+      - simulationId
+      - term
+      type: object
+      properties:
+        requestId:
+          type: string
+          format: uuid
+        simulationId:
+          type: string
+          format: uuid
+        productId:
+          type: string
+          format: uuid
+        partyId:
+          type: string
+          format: uuid
+        requestedAmount:
+          minimum: 0.01
+          exclusiveMinimum: false
+          type: number
+        term:
+          minimum: 1
+          type: integer
+          format: int32
+        currency:
+          pattern: "[A-Z]{3}"
+          type: string
+        purpose:
+          maxLength: 50
+          type: string
+    DraftLoanIntakeReceipt:
+      type: object
+      properties:
+        requestId:
+          type: string
+          format: uuid
+        applicationId:
+          type: string
+          format: uuid
+        simulationId:
+          type: string
+          format: uuid
+        productId:
+          type: string
+          format: uuid
+        partyId:
+          type: string
+          format: uuid
+        requestedAmount:
+          type: number
+        term:
+          type: integer
+          format: int32
+        currency:
+          type: string
+        purpose:
+          type: string
+        initialStatusCode:
+          type: string
+        initialSubStatusCode:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        replayed:
+          type: boolean
+        intentDigest:
+          type: string
+    UpdateApplicationEmploymentDataCommand:
+      type: object
+      properties:
+        applicationId:
+          type: string
+          format: uuid
+        employmentStatus:
+          type: string
+        employmentTypeLabel:
+          type: string
+        employer:
+          type: string
+        position:
+          type: string
+        employmentStartDate:
+          type: string
+          format: date
+        annualPaydays:
+          type: integer
+          format: int32
+        monthlySalary:
+          type: number
+        housingType:
+          type: string
+        housingCost:
+          type: number
+        housingStartDate:
+          type: string
+          format: date
+        existingLoans:
+          type: integer
+          format: int32
+        otherDebts:
+          type: number
+    ApplicationVerificationDTO:
+      required:
+      - loanApplicationId
+      - verificationStatus
+      - verificationType
+      type: object
+      properties:
+        verificationId:
+          type: string
+          format: uuid
+          nullable: true
+        loanApplicationId:
+          type: string
+          format: uuid
+        verificationType:
+          type: string
+        verificationStatus:
+          type: string
+        verificationMethod:
+          type: string
+          nullable: true
+        verifiedBy:
+          type: string
+          nullable: true
+        verifiedAt:
+          type: string
+          format: date-time
+          nullable: true
+        verificationData:
+          type: string
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+    PaginationResponseApplicationVerificationDTO:
+      type: object
+      properties:
+        content:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/ApplicationVerificationDTO"
+        totalElements:
+          type: integer
+          format: int64
+          nullable: true
+        totalPages:
+          type: integer
+          format: int32
+          nullable: true
+        currentPage:
+          type: integer
+          format: int32
+          nullable: true
+    PaginationResponseApplicationTaskDTO:
+      type: object
+      properties:
+        content:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/ApplicationTaskDTO"
+        totalElements:
+          type: integer
+          format: int64
+          nullable: true
+        totalPages:
+          type: integer
+          format: int32
+          nullable: true
+        currentPage:
+          type: integer
+          format: int32
+          nullable: true
+    PaginationResponseApplicationPartyDTO:
+      type: object
+      properties:
+        content:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/ApplicationPartyDTO"
+        totalElements:
+          type: integer
+          format: int64
+          nullable: true
+        totalPages:
+          type: integer
+          format: int32
+          nullable: true
+        currentPage:
+          type: integer
+          format: int32
+          nullable: true
+    PaginationResponseProposedOfferDTO:
+      type: object
+      properties:
+        content:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/ProposedOfferDTO"
+        totalElements:
+          type: integer
+          format: int64
+          nullable: true
+        totalPages:
+          type: integer
+          format: int32
+          nullable: true
+        currentPage:
+          type: integer
+          format: int32
+          nullable: true
+    ApplicationFeeDTO:
+      required:
+      - feeType
+      - loanApplicationId
+      type: object
+      properties:
+        feeId:
+          type: string
+          format: uuid
+          nullable: true
+        loanApplicationId:
+          type: string
+          format: uuid
+        feeType:
+          type: string
+        feeName:
+          type: string
+          nullable: true
+        feeAmount:
+          type: number
+          nullable: true
+        feePercentage:
+          type: number
+          nullable: true
+        isRefundable:
+          type: boolean
+          nullable: true
+        isFinanced:
+          type: boolean
+          nullable: true
+        paymentStatus:
+          type: string
+          nullable: true
+        paidAt:
+          type: string
+          format: date-time
+          nullable: true
+        waivedReason:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+    PaginationResponseApplicationFeeDTO:
+      type: object
+      properties:
+        content:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/ApplicationFeeDTO"
+        totalElements:
+          type: integer
+          format: int64
+          nullable: true
+        totalPages:
+          type: integer
+          format: int32
+          nullable: true
+        currentPage:
+          type: integer
+          format: int32
+          nullable: true
+    ApplicationDocumentDTO:
+      required:
+      - documentId
+      - documentTypeId
+      - isMandatory
+      - isReceived
+      - loanApplicationId
+      type: object
+      properties:
+        applicationDocumentId:
+          type: string
+          format: uuid
+          nullable: true
+        loanApplicationId:
+          type: string
+          format: uuid
+        documentId:
+          type: string
+          format: uuid
+        documentTypeId:
+          type: string
+          format: uuid
+        isMandatory:
+          type: boolean
+        isReceived:
+          type: boolean
+        receivedAt:
+          type: string
+          format: date-time
+          nullable: true
+        documentName:
+          type: string
+          nullable: true
+        fileSizeBytes:
+          type: integer
+          format: int64
+          nullable: true
+        mimeType:
+          type: string
+          nullable: true
+        verificationStatus:
+          type: string
+          nullable: true
+        verifiedBy:
+          type: string
+          format: uuid
+          nullable: true
+        verifiedAt:
+          type: string
+          format: date-time
+          nullable: true
+        rejectionReason:
+          type: string
+          nullable: true
+        expiryDate:
+          type: string
+          format: date
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+    PaginationResponseApplicationDocumentDTO:
+      type: object
+      properties:
+        content:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/ApplicationDocumentDTO"
+        totalElements:
+          type: integer
+          format: int64
+          nullable: true
+        totalPages:
+          type: integer
+          format: int32
+          nullable: true
+        currentPage:
+          type: integer
+          format: int32
+          nullable: true
+    PaginationResponseUnderwritingDecisionDTO:
+      type: object
+      properties:
+        content:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/UnderwritingDecisionDTO"
+        totalElements:
+          type: integer
+          format: int64
+          nullable: true
+        totalPages:
+          type: integer
+          format: int32
+          nullable: true
+        currentPage:
+          type: integer
+          format: int32
+          nullable: true
+    UnderwritingDecisionDTO:
+      required:
+      - decisionCodeId
+      - decisionDate
+      - loanApplicationId
+      type: object
+      properties:
+        underwritingDecisionId:
+          type: string
+          format: uuid
+          nullable: true
+        loanApplicationId:
+          type: string
+          format: uuid
+        decisionDate:
+          type: string
+          format: date-time
+        decisionCodeId:
+          type: string
+          format: uuid
+        approvedAmount:
+          type: number
+          nullable: true
+        approvedInterestRate:
+          type: number
+          nullable: true
+        tenorMonths:
+          type: integer
+          format: int32
+          nullable: true
+        riskGradeId:
+          type: string
+          format: uuid
+          nullable: true
+        remarks:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+    ApplicationConditionDTO:
+      required:
+      - conditionType
+      - loanApplicationId
+      type: object
+      properties:
+        conditionId:
+          type: string
+          format: uuid
+          nullable: true
+        loanApplicationId:
+          type: string
+          format: uuid
+        conditionType:
+          type: string
+        conditionCategory:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        isMandatory:
+          type: boolean
+          nullable: true
+        status:
+          type: string
+          nullable: true
+        dueDate:
+          type: string
+          format: date
+          nullable: true
+        satisfiedDate:
+          type: string
+          format: date-time
+          nullable: true
+        satisfiedBy:
+          type: string
+          nullable: true
+        waivedReason:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+    PaginationResponseApplicationConditionDTO:
+      type: object
+      properties:
+        content:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/ApplicationConditionDTO"
+        totalElements:
+          type: integer
+          format: int64
+          nullable: true
+        totalPages:
+          type: integer
+          format: int32
+          nullable: true
+        currentPage:
+          type: integer
+          format: int32
+          nullable: true
+    PaginationResponseApplicationExternalBankAccountDTO:
+      type: object
+      properties:
+        content:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/ApplicationExternalBankAccountDTO"
+        totalElements:
+          type: integer
+          format: int64
+          nullable: true
+        totalPages:
+          type: integer
+          format: int32
+          nullable: true
+        currentPage:
+          type: integer
+          format: int32
+          nullable: true
+    FireflyInstant:
+      type: string
+      format: date-time
+  securitySchemes:
+    lendingDomainIntakeBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -40,12 +40,7 @@ public class RegisterApplicationPartyHandler extends CommandHandler<RegisterAppl
 
     @Override
     protected Mono<UUID> doHandle(RegisterApplicationPartyCommand cmd) {
-        Mono<UUID> linked = cmd.isContractLinked() && cmd.getContractId() != null
-                ? Mono.just(cmd.getContractId())
-                : customerContract.bind(cmd.getPartyId(), cmd.getContractId(), null, null, cmd.getRoleCodeId())
-                .doOnNext(cmd::setContractId);
-        return linked.then(applicationPartyApi.createParty(cmd.getLoanApplicationId(), cmd, UUID.randomUUID().toString()))
-                .mapNotNull(naturalPersonDTO ->
-                        Objects.requireNonNull(Objects.requireNonNull(naturalPersonDTO)).getApplicationPartyId());
+        return Mono.error(new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY,
+                "Caller contractId/contractLinked cannot prove an owner link; use the managed original-action contract operation"));
     }
 }
