@@ -20,16 +20,11 @@ import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
-/**
- * Confirms a party in customer management and links that party to a contract
- * before this domain writes the loan. The sandbox implementation opens no socket.
- */
+/** Legacy source compatibility only; the missing application and original action prevent a governed link. */
+@Deprecated
 @FunctionalInterface
 public interface CustomerContractLink {
 
-    /**
-     * @param contractId existing contract, or null when this call must create one
-     * @return the contract id to keep as a cross-core identifier
-     */
+    /** Legacy callers are refused; UUID input/output is not a verified original-action owner receipt. */
     Mono<UUID> bind(UUID partyId, UUID contractId, UUID productId, String currency, UUID roleInContractId);
 }

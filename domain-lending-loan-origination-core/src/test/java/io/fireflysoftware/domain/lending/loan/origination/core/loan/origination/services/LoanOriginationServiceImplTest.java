@@ -99,7 +99,7 @@ class LoanOriginationServiceImplTest {
     }
 
     @Test
-    void submitApplication_linksThePartyBeforeTheSagaWritesTheLoan() {
+    void submitApplication_refusesUnmanagedContractBindingBeforeTheSagaWritesTheLoan() {
         UUID partyId = UUID.randomUUID();
         UUID contractId = UUID.randomUUID();
         var party = new RegisterApplicationPartyCommand();
@@ -113,17 +113,13 @@ class LoanOriginationServiceImplTest {
             return Mono.just(contractId);
         };
         var linked = new LoanOriginationServiceImpl(engine, queryBus, commandBus, link);
-        SagaResult sagaResult = mock(SagaResult.class);
-        when(engine.execute(eq("RegisterApplicationSaga"), any(StepInputs.class)))
-                .thenReturn(Mono.just(sagaResult));
-
         StepVerifier.create(linked.submitApplication(command))
-                .expectNext(sagaResult)
-                .verifyComplete();
-
-        assertThat(party.getContractId()).isEqualTo(contractId);
-        assertThat(party.isContractLinked()).isTrue();
-        verify(engine).execute(eq("RegisterApplicationSaga"), any(StepInputs.class));
+                .expectErrorMatches(error -> error instanceof org.springframework.web.server.ResponseStatusException status
+                        && status.getStatusCode().value() == 422)
+                .verify();
+        assertThat(party.getContractId()).isNull();
+        assertThat(party.isContractLinked()).isFalse();
+        verify(engine, never()).execute(anyString(), any(StepInputs.class));
     }
 
     @Test
@@ -138,7 +134,8 @@ class LoanOriginationServiceImplTest {
         var linked = new LoanOriginationServiceImpl(engine, queryBus, commandBus, link);
 
         StepVerifier.create(linked.submitApplication(command))
-                .expectErrorMessage("Party is required")
+                .expectErrorMatches(error -> error instanceof org.springframework.web.server.ResponseStatusException status
+                        && status.getStatusCode().value() == 422)
                 .verify();
 
         verify(engine, never()).execute(anyString(), any(StepInputs.class));
