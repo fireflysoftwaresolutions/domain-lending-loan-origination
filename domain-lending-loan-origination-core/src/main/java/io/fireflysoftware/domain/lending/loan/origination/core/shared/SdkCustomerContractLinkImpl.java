@@ -1,5 +1,6 @@
 /* Copyright 2026 Firefly Software Foundation. Licensed under the Apache License, Version 2.0. */
 package io.fireflysoftware.domain.lending.loan.origination.core.shared;
+import io.fireflysoftware.domain.lending.loan.origination.core.shared.impl.UnavailableCustomerContractLinkImpl;
 import java.util.UUID;
 import reactor.core.publisher.Mono;
 /** Retained legacy signature only. It cannot establish a governed original-action contract link. */

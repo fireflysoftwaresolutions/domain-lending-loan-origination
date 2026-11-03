@@ -31,7 +31,7 @@ import io.fireflysoftware.domain.lending.loan.origination.core.loan.origination.
 import io.fireflysoftware.domain.lending.loan.origination.core.loan.origination.workflows.RegisterScoreSaga;
 import io.fireflysoftware.domain.lending.loan.origination.core.loan.origination.workflows.UpdateApplicationStatusSaga;
 import io.fireflysoftware.domain.lending.loan.origination.core.shared.CustomerContractLink;
-import io.fireflysoftware.domain.lending.loan.origination.core.shared.UnavailableCustomerContractLinkImpl;
+import io.fireflysoftware.domain.lending.loan.origination.core.shared.impl.UnavailableCustomerContractLinkImpl;
 import io.fireflysoftware.domain.lending.loan.origination.core.simulation.commands.PersistSimulationCommand;
 import org.fireflyframework.orchestration.saga.engine.SagaResult;
 import org.fireflyframework.orchestration.saga.engine.ExpandEach;

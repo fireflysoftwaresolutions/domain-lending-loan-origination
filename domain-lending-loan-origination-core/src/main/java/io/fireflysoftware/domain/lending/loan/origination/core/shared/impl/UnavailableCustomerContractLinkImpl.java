@@ -1,5 +1,6 @@
 /* Copyright 2026 Firefly Software Foundation. Licensed under the Apache License, Version 2.0. */
-package io.fireflysoftware.domain.lending.loan.origination.core.shared;
+package io.fireflysoftware.domain.lending.loan.origination.core.shared.impl;
+import io.fireflysoftware.domain.lending.loan.origination.core.shared.CustomerContractLink;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
