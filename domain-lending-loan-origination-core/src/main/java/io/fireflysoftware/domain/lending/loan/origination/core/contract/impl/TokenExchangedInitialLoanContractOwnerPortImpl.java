@@ -96,9 +96,10 @@ public final class TokenExchangedInitialLoanContractOwnerPortImpl implements Ini
             if(type!=null&&MediaType.APPLICATION_JSON.isCompatibleWith(type)&&bytes.length>0&&bytes.length<=16384)try{
                 var mapper=new ObjectMapper(com.fasterxml.jackson.core.JsonFactory.builder().enable(com.fasterxml.jackson.core.StreamReadFeature.STRICT_DUPLICATE_DETECTION).build()).enable(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
                 var body=mapper.readValue(bytes,ContractLinkError.class);
-                if(scope.actionId().equals(body.getActionId())&&"SAME_ACTION_OBSERVE_OR_EXACT_REPLAY".equals(body.getRecovery())&&body.getOutcome()!=null&&("CONTRACT_LINK_"+body.getOutcome().getValue()).equals(body.getCode())){
+                if(scope.actionId().equals(body.getActionId())&&"SAME_ACTION_OBSERVE_OR_EXACT_REPLAY".equals(body.getRecovery())&&body.getOutcome()!=null){
                     var outcome=InitialLoanContractFailure.Outcome.valueOf(body.getOutcome().getValue());
-                    if(http.getStatusCode().value()==409&&outcome==InitialLoanContractFailure.Outcome.CONFLICT||http.getStatusCode().value()==503&&Set.of(InitialLoanContractFailure.Outcome.REFUSED,InitialLoanContractFailure.Outcome.OUTCOME_UNKNOWN,InitialLoanContractFailure.Outcome.COMMITTED_RESPONSE_UNAVAILABLE).contains(outcome))return failure(scope,outcome);
+                    if(http.getStatusCode().value()==409&&outcome==InitialLoanContractFailure.Outcome.CONFLICT&&Set.of("CONTRACT_LINK_ACTION_CONFLICT","CONTRACT_LINK_INITIAL_PRIMARY_ALREADY_BOUND").contains(body.getCode()))return failure(scope,outcome);
+                    if(http.getStatusCode().value()==503&&("CONTRACT_LINK_"+outcome.name()).equals(body.getCode())&&Set.of(InitialLoanContractFailure.Outcome.REFUSED,InitialLoanContractFailure.Outcome.OUTCOME_UNKNOWN,InitialLoanContractFailure.Outcome.COMMITTED_RESPONSE_UNAVAILABLE).contains(outcome))return failure(scope,outcome);
                 }
             }catch(Exception malformed){/* An ambiguous envelope cannot resolve a dispatched original action. */}
         }
